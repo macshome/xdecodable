@@ -10,7 +10,7 @@ let package = Package(
         .library(
             name: "xdecodable",
             targets: ["xdecodable"]
-        ),
+        )
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -20,7 +20,10 @@ let package = Package(
         ),
         .testTarget(
             name: "xdecodableTests",
-            dependencies: ["xdecodable"]
+            dependencies: ["xdecodable"],
+            resources: [
+                .copy("TestProjects")
+            ]
         ),
     ]
 )
