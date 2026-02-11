@@ -29,17 +29,17 @@ enum ProjectObject: Decodable {
     case legacyTarget(PBXLegacyTarget)
     case buildRule(PBXBuildRule)
     case referenceProxy(PBXReferenceProxy)
-    
+
     enum CodingKeys: String, CodingKey {
         case isa
     }
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let isa = try container.decode(String.self, forKey: .isa)
-        
+
         let singleValueContainer = try decoder.singleValueContainer()
-        
+
         switch isa {
         case "PBXGroup":
             self = .group(try singleValueContainer.decode(PBXGroup.self))
@@ -279,10 +279,10 @@ struct PBXReferenceProxy: Decodable {
 
 struct AnyCodable: Decodable {
     let value: Any
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        
+
         if let bool = try? container.decode(Bool.self) {
             value = bool
         } else if let int = try? container.decode(Int.self) {

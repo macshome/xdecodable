@@ -137,7 +137,7 @@ func testProjectDecoding(_ url: URL) throws {
         print("❌ Value not found for type: \(type)")
         print("   Context: \(context.debugDescription)")
         print("   Coding path: \(context.codingPath.map { $0.stringValue }.joined(separator: " -> "))")
-        throw  DecodingError.valueNotFound(type, context)
+        throw DecodingError.valueNotFound(type, context)
     } catch let DecodingError.dataCorrupted(context) {
         print("❌ Data corrupted")
         print("   Context: \(context.debugDescription)")
