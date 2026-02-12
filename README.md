@@ -148,6 +148,8 @@ Test projects are located in `Tests/xdecodableTests/TestProjects/` and include:
 - Security - Complex framework project
 - Xcode 16.3 projects - Latest Xcode compatibility
 
+These files range randomly from Xcode 3.9-16.3 version formatting. New project files can be added and will automaticly be tested.
+
 ## Error Handling
 
 The decoder provides detailed error information for debugging:
