@@ -3,7 +3,31 @@ import Testing
 
 @testable import xdecodable
 
+/// Tests that Xcode projects can be successfully decoded from their project.pbxproj files.
+///
+/// This test is parameterized to run against all available test projects in the TestProjects bundle.
+/// It verifies that the xdecodable decoder can parse real Xcode project files and extract all object types.
+/// The test runs serially to ensure proper output formatting.
+///
+/// - Parameter project: URL pointing to an `.xcodeproj` directory to decode
+@Test("Decodes Xcode Projects", .serialized, arguments: try TestResources.projects)
+func decode(project: URL) async throws {
+    try testProjectDecoding(project)
+}
+
+/// Helper struct for loading test project resources from the bundle.
+///
+/// Provides a convenient interface for discovering and accessing Xcode project files
+/// bundled with the test target.
 struct TestResources {
+    /// Returns an array of URLs for all `.xcodeproj` bundles in the TestProjects directory.
+    /// To add a new test project, just drop the project file in the TestProjects directory.
+    ///
+    /// Loads all Xcode project directories from the test bundle's TestProjects subdirectory.
+    /// This property is used as the argument source for parameterized tests.
+    ///
+    /// - Returns: Array of file URLs pointing to `.xcodeproj` directories
+    /// - Throws: `NSError` if the TestProjects directory cannot be found in the bundle
     static var projects: [URL] {
         get throws {
             guard
@@ -25,11 +49,16 @@ struct TestResources {
     }
 }
 
-@Test("Decodes Xcode Projects", .serialized, arguments: try TestResources.projects)
-func decode(project: URL) async throws {
-    try testProjectDecoding(project)
-}
-
+/// Loads a test resource file from the TestProjects directory bundle.
+///
+/// Helper function to locate resource files by name and extension within the bundled TestProjects directory.
+/// Used for finding individual project files or resources needed during tests.
+///
+/// - Parameters:
+///   - name: The name of the resource file (without extension)
+///   - ext: The file extension (e.g., "xcodeproj", "pbxproj")
+/// - Returns: A URL pointing to the resource file
+/// - Throws: `NSError` if the resource cannot be found in the bundle
 func resourceURL(_ name: String, ext: String) throws -> URL {
     guard let url = Bundle.module.url(forResource: name, withExtension: ext, subdirectory: "TestProjects") else {
         throw NSError(
@@ -41,6 +70,27 @@ func resourceURL(_ name: String, ext: String) throws -> URL {
     return url
 }
 
+/// Decodes and validates a single Xcode project file with detailed diagnostic output.
+///
+/// This function loads an Xcode project from disk, decodes it using the xdecodable decoder, and prints
+/// comprehensive information about the project structure. It analyzes object types, counts them,
+/// identifies any unknown object types, and provides details about the root project configuration.
+///
+/// The function performs the following validations:
+/// - Loads the `project.pbxproj` plist file from the given `.xcodeproj` directory
+/// - Decodes the entire project structure using PropertyListDecoder
+/// - Categorizes and counts all object types found in the project
+/// - Reports any unknown or unsupported object types (up to 10 examples)
+/// - Displays project metadata (archive version, object version)
+/// - Shows information about targets and Swift package dependencies
+/// - Provides detailed error messages with decoding context on failure
+///
+/// - Parameter url: URL pointing to an `.xcodeproj` directory containing the `project.pbxproj` file
+/// - Throws: `DecodingError` if the project.pbxproj file cannot be decoded. Specific error types include:
+///   - `keyNotFound`: Required key is missing from the project structure
+///   - `typeMismatch`: A value's type doesn't match the expected type
+///   - `valueNotFound`: An expected value is nil or missing
+///   - `dataCorrupted`: The plist data is malformed or corrupted
 func testProjectDecoding(_ url: URL) throws {
     print("\n=== Testing \(url.lastPathComponent) ===")
 
