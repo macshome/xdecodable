@@ -53,7 +53,7 @@ A Swift package for decoding and parsing Xcode project files (`project.pbxproj`)
 Add this package to your `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/yourusername/xdecodable.git", from: "1.0.0")
+.package(url: "https://github.com/macshome/Xdecodable.git", from: "1.0.0")
 ```
 
 Or in Xcode: File → Add Packages → Enter the repository URL
